@@ -7,35 +7,26 @@ var logger = TaskRunner.logger;
 
 
 var options = {
-    url: 'https://api.github.com/user/repos',
-    method: 'POST',
+    url: 'http://192.168.18.1/api/plugin/installed_plugins',
+    method: 'GET',
     headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'leftstick@qq.com',
         'Content-type': 'application/json; charset=utf-8'
     },
     auth: {
         user: '',
-        pass: ''
+        pass: '',
+        sendImmediately: true
     },
-    encoding: 'utf-8',
-    body: {
-        'name': '',
-        'description': '',
-        'auto_init': true,
-        'license_template': 'mit'
-    }
+    encoding: 'utf-8'
 };
 
 
 var Task = Base.extend({
-    id: 'CreateGitRepo',
-    name: 'Create a brand new repository on Github',
-    position: 5,
+    id: 'listinstalledapps',
+    name: '魔豆路由上已安装的应用列表',
+    position: 1,
     run: function(cons) {
 
-        var fs = require('fs');
-        var path = require('path');
         var request = require('request');
 
         var _this = this;
@@ -43,76 +34,41 @@ var Task = Base.extend({
         this.prompt([{
             type: 'input',
             name: 'username',
-            message: 'Username or Email for Github',
-            default: _this.get('githubaccount', process.env.USERNAME)
+            message: '极客模式管理员用户名：',
+            default: _this.get('modouadmin', 'matrix')
             }, {
             type: 'password',
             name: 'password',
-            message: 'Password for Github',
+            message: '极客模式管理员密码：',
             validate: function(pass) {
                 return !!pass;
             }
-            }, {
-            type: 'input',
-            name: 'proName',
-            message: 'Project name to be created',
-            validate: function(pass) {
-                return !!pass;
-            }
-            }, {
-            type: 'input',
-            name: 'proDesc',
-            message: 'Project description'
         }], function(answer) {
                 options.auth.user = answer.username;
                 options.auth.pass = answer.password;
-                options.body.name = answer.proName;
-                options.body.description = answer.proDesc;
-                options.body = JSON.stringify(options.body);
-
-                answer.localPath = path.join('.', answer.proName);
+                console.log(options);
                 _this.put({
-                    githubaccount: answer.username
+                    modouadmin: answer.username
                 });
 
 
-                fs.exists(answer.localPath, function(exists) {
-                    if (exists) {
-                        cons('The directory [' + answer.proName + '] is already exist.');
+                request(options, function(err, incoming, response) {
+                    console.log(response);
+                    if (err) {
+                        cons(err);
+                        return;
+                    }
+                    var res = JSON.parse(response);
+                    if (res.code !== 0 || typeof res.code === 'undefined') {
+                        cons(res.msg || res.errmsg);
                         return;
                     }
 
-                    request(options, function(err, incoming, response) {
-                        var res = JSON.parse(response);
-                        if (err) {
-                            cons(err);
-                            return;
-                        }
-                        if (res.errors) {
-                            cons(res.errors[0].message);
-                            return;
-                        }
-                        if (res.message) {
-                            cons(res.message);
-                            return;
-                        }
-                        logger.success('Repository [' + answer.proName + '] is created!');
-
-                        var exec = new Shell(['git clone ' + res.ssh_url]);
-
-                        exec.start().then(function() {
-                            cons();
-                            return;
-                        }, function(err) {
-                                cons(err);
-                                return;
-                            });
-                    });
-
+                    logger.info(res.plugins);
+                    cons();
                 });
 
             });
-
 
     }
 });

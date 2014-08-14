@@ -9,6 +9,23 @@ var spinner = require("char-spinner");
 var pkg = require('../package.json');
 var taskList = require('./taskList');
 
+var conn = require('./libs/modouConnector');
+
+conn.post('http://192.168.18.1/api/auth/login', {
+    password: '13795222751'
+}).success(function(data) {
+    conn.get('http://192.168.18.1/api/plugin/installed_plugins', data).success(function(data) {
+        console.log('suc');
+        console.log(data);
+    }).error(function(err) {
+        console.log('err');
+        console.log(err);
+    });
+}).error(function(err) {
+    console.log(err);
+});
+
+
 
 
 // Checks for available update and returns an instance
@@ -34,10 +51,3 @@ var subtitle = '使用如下功能前，请先确认已经打开了魔豆路由�
 //     version: 'v' + pkg.version,
 //     preferenceName: '.modou'
 // });
-
-spinner({
-    msg: '极客模式校验中...'
-});
-setTimeout(function() {
-   console.log('msg');
-}, 3000);

@@ -1,0 +1,14 @@
+{yellow}{bold}用法: {/bold}{/yellow}
+  
+    1. 通过键盘[上]/[下]键选择想要的操作
+    2. 按[回车]键执行
+  
+
+{yellow}{bold}有疑问怎么办?{/bold}{/yellow}
+    你可以在如下地址注册{bold}问题{/bold}:
+        {magenta}https://github.com/leftstick/modou-terminal-controller/issues{/magenta}
+
+{yellow}{bold}发现bug或想成为贡献者?{/bold}{/yellow}
+    代码资源库在:
+        {magenta}https://github.com/leftstick/modou-terminal-controller{/magenta}
+    随时欢迎提交bug或pull request

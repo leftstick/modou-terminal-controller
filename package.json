@@ -1,0 +1,44 @@
+{
+  "name": "modou-terminal-controller",
+  "version": "1.0.0",
+  "description": "A terminal UI provides common use of modou-wifi",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "bin": {
+    "modou": "./bin/modou-cli.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leftstick/modou-terminal-controller.git"
+  },
+  "keywords": [
+    "terminal-controller",
+    "modouwifi"
+  ],
+  "author": {
+    "name": "Howard.Zuo",
+    "email": "leftstick@qq.com",
+    "url": "https://github.com/leftstick"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leftstick/modou-terminal-controller/issues"
+  },
+  "homepage": "https://github.com/leftstick/modou-terminal-controller",
+  "dependencies": {
+    "char-spinner": "^1.0.1",
+    "lodash": "^2.4.1",
+    "mocha": "^1.21.4",
+    "terminal-task-runner": "^1.2.0",
+    "update-notifier": "^0.2.0"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">= 0.10"
+  }
+}

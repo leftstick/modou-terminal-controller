@@ -11,6 +11,7 @@ var options = {
     headers: {
         'Content-type': 'application/json; charset=utf-8'
     },
+    jar: true,
     encoding: 'utf-8'
 };
 
@@ -39,10 +40,7 @@ var wrapperPromise = function(promise) {
 
 var get = function(url, data) {
     var opts = _.defaults({
-        url: url,
-        headers: {
-            Cookie: data
-        }
+        url: url
     }, options);
 
     var defered = TaskRunner.Q.defer();
@@ -69,7 +67,7 @@ var post = function(url, data) {
     var opts = _.defaults({
         url: url,
         method: 'POST',
-        body: JSON.stringify(data)
+        body: JSON.stringify(data || '')
     }, options);
     var defered = TaskRunner.Q.defer();
     var promise = defered.promise;
@@ -82,19 +80,25 @@ var post = function(url, data) {
         }
         var res = JSON.parse(response);
         if (typeof res.code === 'undefined' || res.code !== 0) {
-            defered.reject(res.msg || res.errmsg);
+            defered.reject(res.msg || res.errmsg, incoming);
             return;
         }
-        defered.resolve(incoming.headers['set-cookie'][0]);
+        // defered.resolve(incoming.headers['set-cookie'][0]);
+        defered.resolve(res, incoming);
     });
 
     return promise;
-}
+};
 
 var connector = {
-    get: get,
-    post: post,
-    checkEnv: function() {}
+    askForPermission: function(password) {
+        return post(login, {
+            password: password
+        });
+    },
+    listPlugin: function() {
+        return get(list_plugins);
+    }
 };
 
 module.exports = connector;

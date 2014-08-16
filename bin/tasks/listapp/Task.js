@@ -1,10 +1,7 @@
 'use strict';
 
-var TaskRunner = require('terminal-task-runner');
-var Shell = TaskRunner.shell;
-var Base = TaskRunner.Base;
-var logger = TaskRunner.logger;
-
+var Base = require('../../libs/ModouTask');
+var logger = require('terminal-task-runner').logger;
 
 var Task = Base.extend({
     id: 'listinstalledapps',
@@ -16,40 +13,31 @@ var Task = Base.extend({
 
         var conn = require('../../libs/modouConnector');
 
-        var listPlugins = function() {
-            var listPromise = conn.listPlugin();
+        var listPromise = this.doModou(conn.listPlugin);
 
-            listPromise.success(function(data, resp) {
-                cons(data);
+        listPromise.success(function(resp) {
+            var Table = require('cli-table');
+            var table = new Table({
+                head: ['名称', '作者', '版本', '大小', '描述', '状态']
             });
-
-            listPromise.error(function(err, resp) {
-                if (err instanceof Error) {
-                    cons('极客模式尚未开启，请先启动魔豆路由上的极客模式');
-                    return;
-                }
-                if (resp.statusCode === 403) {
-                    this.prompt([{
-                        type: 'password',
-                        name: 'password',
-                        message: '极客模式管理员密码：',
-                        validate: function(pass) {
-                            return !!pass;
-                        }
-                    }], function(answer) {
-                            var permission = conn.askForPermission(answer.password);
-                            permission.success(function() {
-                                listPlugins();
-                            });
-                            permission.error(function() {
-                                cons('尝试登录失败，请重试...');
-                            });
-                        });
-                }
+            var plugins = resp.data.plugins;
+            plugins.forEach(function(plugin) {
+                table.push([plugin.name, plugin.author, plugin.version, plugin.size, plugin.description, plugin.isRunning ? '启用' : '停用']);
             });
-        };
+            logger.warn(table.toString());
+            cons();
+        });
 
-        listPlugins();
+        listPromise.error(function(err) {
+            if (err === 'GEEKDISABLED') {
+                cons('极客模式尚未开启，请先启动魔豆路由上的极客模式');
+                return;
+            }
+            if (err === 'PASSWORDERROR') {
+                cons('尝试登录失败，请重试...');
+                return;
+            }
+        });
 
 
 

@@ -31,7 +31,20 @@ TaskRunner.createMenu({
     helpTxt: '帮助',
     exitTxt: '退出',
     taskList: taskList,
-    helpFile: path.resolve(__dirname, 'help.txt'),
-    version: 'v' + pkg.version,
+    helpFile: path.resolve(__dirname, 'help.txt'),    version: 'v' + pkg.version,
     preferenceName: '.modou'
 });
+
+
+// var inquirer = require('inquirer');
+
+// inquirer.prompt([{
+//                         type: 'password',
+//                         name: 'password',
+//                         message: '极客模式管理员密码',
+//                         validate: function(pass) {
+//                             return !!pass;
+//                         }
+//                     }], function(answer) {
+//                         console.log(answer);
+//                         });

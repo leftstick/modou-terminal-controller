@@ -21,73 +21,64 @@ var host = 'http://192.168.18.1';
 var login = '/api/auth/login';
 var list_plugins = '/api/plugin/installed_plugins';
 
-var wrapperPromise = function(promise) {
-    promise.success = function(fn) {
-        promise.then(function(data) {
-            fn(data);
-        });
-        return promise;
-    };
-
-    promise.error = function(fn) {
-        promise.then(null, function(err) {
-            fn(err);
-        });
-        return promise;
-    };
-
-};
 
 var get = function(url, data) {
     var opts = _.defaults({
-        url: url
+        url: host + url
     }, options);
 
-    var defered = TaskRunner.Q.defer();
-    var promise = defered.promise;
-    wrapperPromise(promise);
+    var defered = require('./httpUtil').defer();
 
-    request(opts, function(err, incoming, response) {
+    request(opts, function(err, response, body) {
         if (err) {
             defered.reject(err);
             return;
         }
-        var res = JSON.parse(response);
+        var res = JSON.parse(body);
         if (typeof res.code === 'undefined' || res.code !== 0) {
-            defered.reject(res.msg || res.errmsg);
+            defered.reject({
+                msg: res.msg || res.errmsg,
+                response: response
+            });
             return;
         }
-        defered.resolve(res);
+        defered.resolve({
+            data: res,
+            response: response
+        });
     });
 
-    return promise;
+    return defered.promise;
 };
 
 var post = function(url, data) {
     var opts = _.defaults({
-        url: url,
+        url: host + url,
         method: 'POST',
         body: JSON.stringify(data || '')
     }, options);
-    var defered = TaskRunner.Q.defer();
-    var promise = defered.promise;
-    wrapperPromise(promise);
+    var defered = require('./httpUtil').defer();
 
-    request(opts, function(err, incoming, response) {
+    request(opts, function(err, response, body) {
         if (err) {
             defered.reject(err);
             return;
         }
-        var res = JSON.parse(response);
+        var res = JSON.parse(body);
         if (typeof res.code === 'undefined' || res.code !== 0) {
-            defered.reject(res.msg || res.errmsg, incoming);
+            defered.reject({
+                msg: res.msg || res.errmsg,
+                response: response
+            });
             return;
         }
-        // defered.resolve(incoming.headers['set-cookie'][0]);
-        defered.resolve(res, incoming);
+        defered.resolve({
+            data: res,
+            response: response
+        });
     });
 
-    return promise;
+    return defered.promise;
 };
 
 var connector = {

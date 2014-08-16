@@ -36,6 +36,13 @@ modou
 即可打开一个终端命令行界面，你可以通过上下键选择，按`回车`键执行该任务，就能看到结果了。如果该任务需要鉴权或者其他信息，命令行会要求你输入的，放心
 
 
+
+
+## LICENSE ##
+
+[MIT License](https://raw.githubusercontent.com/leftstick/modou-terminal-controller/master/LICENSE)
+
+
 [npm-url]: https://npmjs.org/package/modou-terminal-controller
 [npm-image]: https://badge.fury.io/js/modou-terminal-controller.png
 [david-url]:https://david-dm.org/leftstick/modou-terminal-controller.png

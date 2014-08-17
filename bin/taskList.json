@@ -1,4 +1,6 @@
 [
     "listplugins",
-    "delplugins"
+    "delplugins",
+    "installcustom",
+    "preference"
 ]

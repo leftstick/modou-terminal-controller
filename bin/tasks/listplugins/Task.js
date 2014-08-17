@@ -13,7 +13,7 @@ var Task = Base.extend({
 
         var _this = this;
 
-        var listPromise = this.doModou(this.get(list_plugins));
+        var listPromise = this.doModou(this.ajaxGet(list_plugins));
 
         listPromise.success(function(resp) {
             var Table = require('cli-table');

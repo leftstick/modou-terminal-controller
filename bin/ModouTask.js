@@ -64,10 +64,75 @@ var sendRequrest = function(opts) {
     return defered.promise;
 };
 
+var upload = function(opts, data) {
+    var request = require('request');
+    opts.method = 'POST';
+    var defered = defer();
+    var _ = require('lodash');
+
+    var r = request(opts, function(err, response, body) {
+        if (err) {
+            defered.reject(err);
+            return;
+        }
+        var res = JSON.parse(body);
+        if (typeof res.code === 'undefined' || res.code !== 0) {
+            defered.reject({
+                msg: res.msg || res.errmsg,
+                response: response
+            });
+            return;
+        }
+        defered.resolve({
+            data: res,
+            response: response
+        });
+    });
+
+    var form = r.form();
+    _.each(data, function(value, key) {
+        if (value.call) {
+            form.append(key, value());
+            return;
+        }
+        form.append(key, value);
+    });
+    return defered.promise;
+};
+
+var encode = function(str) {
+    return new Buffer(str).toString('base64');
+};
+
+var decode = function(str) {
+    return new Buffer(str, 'base64').toString();
+};
+
+var permission = function(defered, recall, password) {
+    var _this = this;
+    var save = _this.get('saveGeekPassword', false);
+    if (save) {
+        _this.put({
+            geekPwd: encode(password)
+        });
+    }
+    var permission = _this.ajaxPost(login, {
+        password: password
+    })();
+    permission.success(function() {
+        recall();
+    });
+    permission.error(function() {
+        _this.remove(['geekPwd']);
+        defered.reject('PASSWORDERROR');
+    });
+    return permission;
+};
+
 
 var ModouTask = Base.extend({
 
-    get: function(url, data) {
+    ajaxGet: function(url, data) {
         return function() {
             var _ = require('lodash');
             var opts = _.defaults({
@@ -77,7 +142,7 @@ var ModouTask = Base.extend({
             return sendRequrest(opts);
         };
     },
-    post: function(url, data) {
+    ajaxPost: function(url, data) {
         return function() {
             var _ = require('lodash');
             var opts = _.defaults({
@@ -87,6 +152,15 @@ var ModouTask = Base.extend({
             }, options);
 
             return sendRequrest(opts);
+        };
+    },
+    upload: function(url, data) {
+        return function() {
+            var opts = {
+                url: host + url,
+                jar: true
+            };
+            return upload(opts, data);
         };
     },
 
@@ -108,6 +182,13 @@ var ModouTask = Base.extend({
                     return;
                 }
                 if (err.response.statusCode === 403) {
+                    var savedPwd = _this.get('geekPwd');
+                    if (savedPwd) {
+                        savedPwd = decode(savedPwd);
+                        permission.bind(_this)(defered, recall, savedPwd);
+                        return;
+                    }
+
                     _this.prompt([{
                         type: 'password',
                         name: 'password',
@@ -116,15 +197,7 @@ var ModouTask = Base.extend({
                             return !!pass;
                         }
                     }], function(answer) {
-                            var permission = _this.post(login, {
-                                password: answer.password
-                            })();
-                            permission.success(function() {
-                                recall();
-                            });
-                            permission.error(function() {
-                                defered.reject('PASSWORDERROR');
-                            });
+                            permission.bind(_this)(defered, recall, answer.password);
                         });
                     return;
                 }

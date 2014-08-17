@@ -5,7 +5,6 @@
 var path = require('path');
 var TaskRunner = require('terminal-task-runner');
 var updateNotifier = require('update-notifier');
-var spinner = require("char-spinner");
 var pkg = require('../package.json');
 var taskList = require('./taskList');
 

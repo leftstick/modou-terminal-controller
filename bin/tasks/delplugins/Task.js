@@ -10,12 +10,12 @@ var uninstall_plugin = '/api/plugin/uninstall_plugin';
 var Task = Base.extend({
     id: 'deleteInstallplugins',
     name: '删除魔豆上已安装的插件',
-    position: 1,
+    position: 3,
     run: function(cons) {
 
         var _this = this;
 
-        var listPromise = this.doModou(this.get(list_plugins));
+        var listPromise = this.doModou(this.ajaxGet(list_plugins));
 
         listPromise.success(function(resp) {
             var plugins = resp.data.plugins;
@@ -42,7 +42,7 @@ var Task = Base.extend({
                     }
 
                     var promises = answer.plugins.map(function(plugin) {
-                        return _this.doModou(_this.post(uninstall_plugin, {
+                        return _this.doModou(_this.ajaxPost(uninstall_plugin, {
                             id: plugin
                         }));
                     });

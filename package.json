@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/leftstick/modou-terminal-controller",
   "dependencies": {
-    "char-spinner": "^git://github.com/leftstick/char-spinner.git#580e611fc718ad84c5cb1f4a54945c54ce1465ef",
+    "char-spinner": "git://github.com/leftstick/char-spinner.git#580e611fc718ad84c5cb1f4a54945c54ce1465ef",
     "cli-table": "git://github.com/leftstick/cli-table.git#af71420983326163eced29f1c1dc0a167cb78326",
     "lodash": "^2.4.1",
     "mocha": "^1.21.4",

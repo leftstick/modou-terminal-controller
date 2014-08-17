@@ -2,6 +2,7 @@ modou-terminal-controller
 =========================
 [![NPM version][npm-image]][npm-url]
 ![][david-url]
+![][travis-url]
 > 基于`Nodejs` 开发，所以需要具备一定的`Nodejs` 常识
 
 

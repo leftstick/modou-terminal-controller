@@ -1,19 +1,19 @@
 'use strict';
 
-var Base = require('../../libs/ModouTask');
+var Base = require('../../ModouTask');
 var logger = require('terminal-task-runner').logger;
 
+var list_plugins = '/api/plugin/installed_plugins';
+
 var Task = Base.extend({
-    id: 'listinstalledapps',
-    name: '魔豆路由上已安装的应用列表',
+    id: 'listinstalledplugins',
+    name: '魔豆上已安装的插件列表',
     position: 1,
     run: function(cons) {
 
         var _this = this;
 
-        var conn = require('../../libs/modouConnector');
-
-        var listPromise = this.doModou(conn.listPlugin);
+        var listPromise = this.doModou(this.get(list_plugins));
 
         listPromise.success(function(resp) {
             var Table = require('cli-table');
@@ -38,8 +38,6 @@ var Task = Base.extend({
                 return;
             }
         });
-
-
 
     }
 });

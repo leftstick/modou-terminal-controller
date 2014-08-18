@@ -42,6 +42,7 @@ modou
 - 安装非认证的插件
 - 删除魔豆上已安装的插件
 - [设置](./docs/preference.md)
+- 恢复默认设置
 
 
 ## LICENSE ##

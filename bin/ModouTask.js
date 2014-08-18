@@ -12,7 +12,7 @@ var options = {
     encoding: 'utf-8'
 };
 
-var host = 'http://192.168.18.1';
+var host = 'http://modouwifi.net';
 var login = '/api/auth/login';
 
 var wrapperPromise = function(promise) {

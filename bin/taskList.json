@@ -2,6 +2,8 @@
     "listplugins",
     "delplugins",
     "installcustom",
+    "startplugins",
+    "stopplugins",
     "preference",
     "resetpreference"
 ]
